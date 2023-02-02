@@ -1,17 +1,14 @@
-﻿
-@{
-    Layout = null;
+﻿@{
+    ViewData["Title"] = "Bienvenue dans le TP HN";
+
+    ViewData["Css"] = "Index.css";
+
+    Dictionary<string, string> menus = new Dictionary<string, string>{
+        { "Formulaire", "/Home/Index/Formulaire" },
+        { "Liste avis", "/Home/Index/ListeAvis" }};
+    ViewData["Menus"] = menus;
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-    <div> i'm bleu
-    </div>
-</body>
-</html>
+<p>
+    <a href="/Home/Index/Formulaire">Remplir le formulaire </a>
+</p>

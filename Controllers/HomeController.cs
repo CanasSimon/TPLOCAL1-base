@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using TPLOCAL1.Models;
@@ -25,10 +28,10 @@ namespace TPLOCAL1.Controllers
                 switch (id)
                 {
                     case "ListeAvis":
-                        //reste à faire : coder la lecture du fichier xml fourni
-                        return View(id);
+                        var liste = new ListeAvis();
+                        var avis = liste.GetAvis(AppDomain.CurrentDomain.BaseDirectory + "/FichierXML/DataAvis.xml");
+                        return View(id, avis);
                     case "Formulaire":
-                        //reste à faire : appeler la vue Formulaire avec le modèle de données vide
                         return View(id);
                     default:
                         //renvoie vers Index (voir routage dans RouteConfig.cs)
@@ -37,15 +40,51 @@ namespace TPLOCAL1.Controllers
             }
         }
 
+        //méthode pour entrer les données du formulaire
+        [HttpPost]
+        public ActionResult Formulaire(FormulaireModel model)
+        {
+            if (model.Sexe.Equals(FormulaireModel.Sexes.ToArray()[0]))
+            {
+                ModelState.AddModelError("Sexe", "Selectionnez un sexe.");
+            }
+
+            if (model.Date > DateTime.Parse("01/01/2021"))
+            {
+                ModelState.AddModelError("Date", "La formation doit avoir commencée avant le 01/01/2021.");
+            }
+
+            if (model.Formation.Equals(FormulaireModel.Formations.ToArray()[0]))
+            {
+                ModelState.AddModelError("Formation", "Selectionnez une formation.");
+            }
+            else if (model.Formation.Equals(FormulaireModel.Formations.ToArray()[1]) && model.AvisCobol == null)
+            {
+                ModelState.AddModelError("AvisCobol", "Donnez un avis pour la formation Cobol.");
+            }
+            else if (model.Formation.Equals(FormulaireModel.Formations.ToArray()[2]) && model.AvisSharp == null)
+            {
+                ModelState.AddModelError("AvisCobol", "Donnez un avis pour la formation C#.");
+            }
+            else if (model.Formation.Equals(FormulaireModel.Formations.ToArray()[3]) && 
+                (model.AvisCobol == null || model.AvisSharp == null))
+            {
+                ModelState.AddModelError("AvisCobol", "Donnez un avis pour les deux formations.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            return View(nameof(ValidationFormulaire), model);
+        }
 
         //méthode pour envoyer les données du formulaire vers la page de validation
         [HttpPost]
-        public ActionResult ValidationFormulaire(/*model*/)
+        public ActionResult ValidationFormulaire(FormulaireModel model)
         {
-            //reste à faire : tester de si les champs du modele sont bien remplis
-            //s'ils ne sont pas bien remplis, afficher une erreur et rester sur la page formulaire
-            //sinon, appeler la page ValidationFormulaire avec les données remplies par l'utilisateur
-                
+            return View(model);
         }
     }
 }

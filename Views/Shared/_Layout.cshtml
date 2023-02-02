@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>HN - TP LOCAL</title>
+    <link rel="stylesheet" href="/ressources/@ViewData["Css"]" />
+</head>
+<body>
+    <header>
+        <img src="~/ressources/GroupeHN.png" class="image" alt="GroupeHN" />
+        <h1>@ViewData["Title"]</h1>
+    </header>
+
+    <nav>
+        <ul>
+            @foreach (var item in (ViewData["Menus"] as Dictionary<string, string>))
+            {
+                <li><a href="@item.Value">@item.Key</a></li>
+            }
+        </ul>
+    </nav>
+
+    <section>
+        @RenderBody()
+    </section>
+</body>
+</html>
